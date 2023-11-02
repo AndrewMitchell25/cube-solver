@@ -110,7 +110,7 @@ class CubieCube:
         # Set the last corner based on the parity and orientations of the other 7
         self.co[7] = ((3 - twist_parity % 3) % 3)
 
-    def flip(self):
+    def get_flip(self):
         """
         Get the flip (coordinate representing edge orientation) of the cube
         
@@ -135,7 +135,7 @@ class CubieCube:
             flip_parity += self.eo[i]
             flip //= 2
         # Set the last edge based on the parity and orientations of the other 11
-        self.co[11] = ((2 - flip_parity % 2) % 2)
+        self.eo[11] = ((2 - flip_parity % 2) % 2)
 
     def get_udslice(self):
         """
@@ -149,16 +149,17 @@ class CubieCube:
         """
         udslice, seen = 0, 0
         for i in range(11, -1, -1):
-            udslice += c_nk(11 - i, seen + 1)
-            seen += 1
+            if 8 <= self.ep[i] <= 11:
+                udslice += c_nk(11 - i, seen + 1)
+                seen += 1
         return udslice
     
     def set_udslice(self, udslice):
         """Set the udslice of the cube"""
         udslice_edge = [Edge.FR, Edge.FL, Edge.BL, Edge.BR]
         other_edge = [Edge.UR, Edge.UF, Edge.UL, Edge.UB, Edge.DR, Edge.DF, Edge.DL, Edge.DB]
-        for e in Edge:
-            self.ep[e] = -1
+        for i in range(12):
+            self.ep[i] = -1
 
         # first position the slice edges
         seen = 3
@@ -170,9 +171,9 @@ class CubieCube:
                 udslice -= c_nk(i, seen)
         # then the remaining edges
         x = 0
-        for e in Edge:
-            if self.ep[e] == -1:
-                self.ep[e] = other_edge[x]
+        for i in range(12):
+            if self.ep[i] == -1:
+                self.ep[i] = other_edge[x]
                 x += 1
 
 
@@ -199,7 +200,7 @@ class CubieCube:
         slice_edge = [Edge.FR, Edge.FL, Edge.BL, Edge.BR]
         coeffs = [0] * 3
         for i in range(1, 4):
-            coeffs[i - 1] = edge4 % (i - 1)
+            coeffs[i - 1] = edge4 % (i + 1)
             edge4 //= i + 1
         perm = [0] * 4
         for i in range(2, -1 ,-1):
@@ -207,7 +208,7 @@ class CubieCube:
         perm[0] = slice_edge[0]
         self.ep[8:] = perm[:]
 
-    def edge8(self):
+    def get_edge8(self):
         """
         Compute edge8, which is the coordinate representing the permutation of the 8 
         edges UR, UF, UL, UB, DR, DF, DL, DB which in phase 2 will be in the U and D slices.
@@ -221,7 +222,7 @@ class CubieCube:
             edge8 = i * (edge8 + s)
         return edge8
     
-    def edge8(self, edge8):
+    def set_edge8(self, edge8):
         """Set the edge8 of the cube."""
         edges = list(range(8))
         perm = [0] * 8
