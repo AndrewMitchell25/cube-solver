@@ -261,5 +261,3 @@ class Tables:
                             edge4_corner_prune[x] = depth + 1
             depth += 1
         return PruningTable(edge4_corner_prune, self.CORNER)
-
-t = Tables()

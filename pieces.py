@@ -98,3 +98,11 @@ class Facelet(IntEnum):
     B7 = 51
     B8 = 52
     B9 = 53
+
+class Color(IntEnum):
+    U = 0
+    R = 1
+    F = 2
+    D = 3
+    L = 4
+    B = 5
