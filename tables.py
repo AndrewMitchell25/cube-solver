@@ -42,7 +42,7 @@ class Tables:
     def __init__(self):
         if not self.tables_loaded:
             pass
-            #self.load_tables()
+            self.load_tables()
 
     
     def load_tables(self):
@@ -169,5 +169,97 @@ class Tables:
                 cube.edge_multiply(MOVE_CUBE[j])
         return edge8_move
 
+    def make_corner_table(self):
+        """Move table for the corners coordinate in phase 2"""
+        corner_move = [[0 for _ in range(self.MOVES)] for _ in range(self.CORNER)]
+        cube = CubieCube()
+        for i in range(self.CORNER):
+            cube.set_corner(i)
+            for j in range(6):
+                for k in range(3):
+                    cube.corner_multiply(MOVE_CUBE[j])
+                    if k % 2 == 0 and j % 3 != 0:
+                        corner_move[i][3 * j + k] = -1
+                    else:
+                        corner_move[i][3 * j + k] = cube.get_corner()
+                cube.corner_multiply(MOVE_CUBE[j])
+        return corner_move
+
+    def make_udslice_twist_prune(self):
+        udslice_twist_prune = [-1] * (self.UDSLICE * self.TWIST)
+        udslice_twist_prune[0] = 0
+        count, depth = 1, 0
+        while count < self.UDSLICE * self.TWIST:
+            for i in range(self.UDSLICE * self.TWIST):
+                if udslice_twist_prune[i] == depth:
+                    m = [
+                        self.udslice_move[i // self.TWIST][j] * self.TWIST
+                        + self.twist_move[i % self.TWIST][j]
+                        for j in range(18)
+                    ]
+                    for x in m:
+                        if udslice_twist_prune[x] == -1:
+                            count += 1
+                            udslice_twist_prune[x] = depth + 1
+            depth += 1
+        return PruningTable(udslice_twist_prune, self.TWIST)
+
+    def make_udslice_flip_prune(self):
+        udslice_flip_prune = [-1] * (self.UDSLICE * self.FLIP)
+        udslice_flip_prune[0] = 0
+        count, depth = 1, 0
+        while count < self.UDSLICE * self.FLIP:
+            for i in range(self.UDSLICE * self.FLIP):
+                if udslice_flip_prune[i] == depth:
+                    m = [
+                        self.udslice_move[i // self.FLIP][j] * self.FLIP
+                        + self.flip_move[i % self.FLIP][j]
+                        for j in range(18)
+                    ]
+                    for x in m:
+                        if udslice_flip_prune[x] == -1:
+                            count += 1
+                            udslice_flip_prune[x] = depth + 1
+            depth += 1
+        return PruningTable(udslice_flip_prune, self.FLIP)
+
+
+    def make_edge4_edge8_prune(self):
+        edge4_edge8_prune = [-1] * (self.EDGE4 * self.EDGE8)
+        edge4_edge8_prune[0] = 0
+        count, depth = 1, 0
+        while count < self.EDGE4 * self.EDGE8:
+            for i in range(self.EDGE4 * self.EDGE8):
+                if edge4_edge8_prune[i] == depth:
+                    m = [
+                        self.edge4_move[i // self.EDGE8][j] * self.EDGE8
+                        + self.edge8_move[i % self.EDGE8][j]
+                        for j in range(18)
+                    ]
+                    for x in m:
+                        if edge4_edge8_prune[x] == -1:
+                            count += 1
+                            edge4_edge8_prune[x] = depth + 1
+            depth += 1
+        return PruningTable(edge4_edge8_prune, self.EDGE8)
+
+    def make_edge4_corner_prune(self):
+        edge4_corner_prune = [-1] * (self.EDGE4 * self.CORNER)
+        edge4_corner_prune[0] = 0
+        count, depth = 1, 0
+        while count < self.EDGE4 * self.CORNER:
+            for i in range(self.EDGE4 * self.CORNER):
+                if edge4_corner_prune[i] == depth:
+                    m = [
+                        self.edge4_move[i // self.CORNER][j] * self.CORNER
+                        + self.corner_move[i % self.CORNER][j]
+                        for j in range(18)
+                    ]
+                    for x in m:
+                        if edge4_corner_prune[x] == -1:
+                            count += 1
+                            edge4_corner_prune[x] = depth + 1
+            depth += 1
+        return PruningTable(edge4_corner_prune, self.CORNER)
+
 t = Tables()
-print(t.make_edge8_table())
