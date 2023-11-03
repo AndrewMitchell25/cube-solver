@@ -1,5 +1,6 @@
 from pieces import Corner, Edge
 from helpers import c_nk
+from cube import face
 
 class CubieCube:
 
@@ -63,6 +64,29 @@ class CubieCube:
         """Make one of the 6 moves on the cube"""
         self.multiply(MOVE_CUBE[i])
 
+    def move2(self, axis, power):
+        """Make one of the 6 moves on the cube"""
+        for i in range(power):
+            self.multiply(MOVE_CUBE[axis])
+
+    def to_facecube(self):
+        """
+        Convert CubieCube to FaceCube.
+        """
+        ret = face.FaceCube()
+        for i in range(8):
+            j = self.cp[i]
+            ori = self.co[i]
+            for k in range(3):
+                ret.f[face.corner_facelet[i][(k + ori) % 3]] = face.corner_color[j][k]
+        for i in range(12):
+            j = self.ep[i]
+            ori = self.eo[i]
+            for k in range(2):
+                facelet_index = face.edge_facelet[i][(k + ori) % 2]
+                ret.f[facelet_index] = face.edge_color[j][k]
+        return ret
+    
     def corner_parity(self):
         """Get the parity of the current corner permutation"""
         s = 0

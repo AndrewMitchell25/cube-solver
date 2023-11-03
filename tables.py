@@ -1,7 +1,7 @@
 import json
 import os
 
-from cubie import CubieCube, MOVE_CUBE
+from cube import cubie
 
 class PruningTable:
     """Helper class to use pruning on the tables"""
@@ -101,88 +101,88 @@ class Tables:
     def make_twist_table(self):
         """Move table for the twists of the 8 corners"""
         twist_move = [[0 for _ in range(self.MOVES)] for _ in range(self.TWIST)]
-        cube = CubieCube()
+        cube = cubie.CubieCube()
         for i in range(self.TWIST):
             cube.set_twist(i)
             for j in range(6):
                 for k in range(3):
-                    cube.corner_multiply(MOVE_CUBE[j])
+                    cube.corner_multiply(cubie.MOVE_CUBE[j])
                     twist_move[i][3 * j + k] = cube.get_twist()
-                cube.corner_multiply(MOVE_CUBE[j])
+                cube.corner_multiply(cubie.MOVE_CUBE[j])
         return twist_move
     
     def make_flip_table(self):
         """Move table for the flip of the 12 edges"""
         flip_move = [[0 for _ in range(self.MOVES)] for _ in range(self.FLIP)]  
-        cube = CubieCube()
+        cube = cubie.CubieCube()
         for i in range(self.FLIP):
             cube.set_flip(i)
             for j in range(6):
                 for k in range(3):
-                    cube.edge_multiply(MOVE_CUBE[j])
+                    cube.edge_multiply(cubie.MOVE_CUBE[j])
                     flip_move[i][3 * j + k] = cube.get_flip()
-                cube.edge_multiply(MOVE_CUBE[j])
+                cube.edge_multiply(cubie.MOVE_CUBE[j])
         return flip_move
 
     def make_udslice_table(self):
         """Move table for the four UD-slice edges FR, FL, BL and BR"""
         udslice_move = [[0 for _ in range(self.MOVES)] for _ in range(self.UDSLICE)]
-        cube = CubieCube()
+        cube = cubie.CubieCube()
         for i in range(self.UDSLICE):
             cube.set_udslice(i)
             for j in range(6):
                 for k in range(3):
-                    cube.edge_multiply(MOVE_CUBE[j])
+                    cube.edge_multiply(cubie.MOVE_CUBE[j])
                     udslice_move[i][3 * j + k] = cube.get_udslice()
-                cube.edge_multiply(MOVE_CUBE[j])
+                cube.edge_multiply(cubie.MOVE_CUBE[j])
         return udslice_move
     
     def make_edge4_table(self):
         """Move table for the four UD-slice edges FR, FL, BL and BR in the phase 1 -> phase 2 transition"""
         edge4_move = [[0 for _ in range(self.MOVES)] for _ in range(self.EDGE4)]
-        cube = CubieCube()
+        cube = cubie.CubieCube()
         for i in range(self.EDGE4):
             cube.set_edge4(i)
             for j in range(6):
                 for k in range(3):
-                    cube.edge_multiply(MOVE_CUBE[j])
+                    cube.edge_multiply(cubie.MOVE_CUBE[j])
                     if k % 2 == 0 and j % 3 != 0:
                         edge4_move[i][3 * j + k] = -1
                     else:
                         edge4_move[i][3 * j + k] = cube.get_edge4()
-                cube.edge_multiply(MOVE_CUBE[j])
+                cube.edge_multiply(cubie.MOVE_CUBE[j])
         return edge4_move
 
     def make_edge8_table(self):
         """Move table for the edges in the U-face and D-face"""
         edge8_move = [[0 for _ in range(self.MOVES)] for _ in range(self.EDGE8)]
-        cube = CubieCube()
+        cube = cubie.CubieCube()
         for i in range(self.EDGE8):
             cube.set_edge8(i)
             for j in range(6):
                 for k in range(3):
-                    cube.edge_multiply(MOVE_CUBE[j])
+                    cube.edge_multiply(cubie.MOVE_CUBE[j])
                     if k % 2 == 0 and j % 3 != 0:
                         edge8_move[i][3 * j + k] = -1
                     else:
                         edge8_move[i][3 * j + k] = cube.get_edge8()
-                cube.edge_multiply(MOVE_CUBE[j])
+                cube.edge_multiply(cubie.MOVE_CUBE[j])
         return edge8_move
 
     def make_corner_table(self):
         """Move table for the corners coordinate in phase 2"""
         corner_move = [[0 for _ in range(self.MOVES)] for _ in range(self.CORNER)]
-        cube = CubieCube()
+        cube = cubie.CubieCube()
         for i in range(self.CORNER):
             cube.set_corner(i)
             for j in range(6):
                 for k in range(3):
-                    cube.corner_multiply(MOVE_CUBE[j])
+                    cube.corner_multiply(cubie.MOVE_CUBE[j])
                     if k % 2 == 0 and j % 3 != 0:
                         corner_move[i][3 * j + k] = -1
                     else:
                         corner_move[i][3 * j + k] = cube.get_corner()
-                cube.corner_multiply(MOVE_CUBE[j])
+                cube.corner_multiply(cubie.MOVE_CUBE[j])
         return corner_move
 
     def make_udslice_twist_prune(self):

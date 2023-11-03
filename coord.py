@@ -1,5 +1,5 @@
 from tables import Tables
-from cubie import CubieCube
+from cube import cubie
 
 class CoordCube:
     """

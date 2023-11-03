@@ -85,7 +85,8 @@ class SolutionManager:
 
         # initialize the arrays
         self.f = FaceCube(self.facelets)
-        self.c = CoordCube.from_cubiecube(self.f.to_cubiecube())
+        c = self.f.to_cubiecube()
+        self.c = CoordCube(c.get_twist(), c.get_flip(), c.get_udslice(), c.get_edge4(), c.get_edge8(), c.get_corner())
         self.twist[0] = self.c.twist
         self.flip[0] = self.c.flip
         self.udslice[0] = self.c.udslice
@@ -94,20 +95,20 @@ class SolutionManager:
         self.edge8[0] = self.c.edge8
         self.min_dist_1[0] = self.phase1_cost(0)
 
-    def phase2_initialise(self, n):
-        if time.time() > self._timeout:
+    def phase2_initialize(self, n):
+        if time.time() > self.timeout:
             return -2
         # initialise phase 2 search from the phase 1 solution
         cc = self.f.to_cubiecube()
         for i in range(n):
             for j in range(self.power[i]):
                 cc.move(self.axis[i])
-        self.edge4[n] = cc.edge4
-        self.edge8[n] = cc.edge8
-        self.corner[n] = cc.corner
-        self.min_dist_2[n] = self.phase_2_cost(n)
+        self.edge4[n] = cc.get_edge4()
+        self.edge8[n] = cc.get_edge8()
+        self.corner[n] = cc.get_corner()
+        self.min_dist_2[n] = self.phase2_cost(n)
         for depth in range(self.allowed_length - n):
-            m = self.phase_2_search(n, depth)
+            m = self.phase2_search(n, depth)
             if m >= 0:
                 return m
         return -1
@@ -133,7 +134,7 @@ class SolutionManager:
         )
     
     def phase1_search(self, n, depth):
-        if time.time() > self._timeout:
+        if time.time() > self.timeout:
             return -2
         elif self.min_dist_1[n] == 0:
             return self.phase2_initialize(n)
@@ -180,10 +181,10 @@ class SolutionManager:
                     self.edge4[n + 1] = self.tables.edge4_move[self.edge4[n]][mv]
                     self.edge8[n + 1] = self.tables.edge8_move[self.edge8[n]][mv]
                     self.corner[n + 1] = self.tables.corner_move[self.corner[n]][mv]
-                    self.min_dist_2[n + 1] = self._phase_2_cost(n + 1)
+                    self.min_dist_2[n + 1] = self.phase2_cost(n + 1)
 
                     # start search from new node
-                    m = self._phase_2_search(n + 1, depth - 1)
+                    m = self.phase2_search(n + 1, depth - 1)
                     if m >= 0:
                         return m             
         return -1
