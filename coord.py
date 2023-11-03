@@ -17,7 +17,7 @@ class CoordCube:
         self.edge8 = edge8
         self.corner = corner
 
-    def from_cubie(self, cube):
+    def from_cubiecube(self, cube):
         """Create a CoordCube from a CubieCube"""
         return self(cube.get_twist(), cube.get_flip(), cube.get_udslice(), cube.get_edge4(), cube.get_edge8(), cube.get_corner())
     

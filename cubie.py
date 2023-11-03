@@ -290,6 +290,35 @@ class CubieCube:
         perm[0] = edges[0]
         self.ep = perm[:]
 
+# --------------------- Solvability ---------------------
+
+    def verify(self):
+        """Check if cube is solvable"""
+        total = 0
+        edge_count = [0 for i in range(12)]
+        for e in range(12):
+            edge_count[self.ep[e]] += 1
+        for i in range(12):
+            if edge_count[i] != 1:
+                return -2
+        for i in range(12):
+            total += self.eo[i]
+        if total % 2 != 0:
+            return -3
+        corner_count = [0] * 8
+        for c in range(8):
+            corner_count[self.cp[c]] += 1
+        for i in range(8):
+            if corner_count[i] != 1:
+                return -4
+        total = 0
+        for i in range(8):
+            total += self.co[i]
+        if total % 3 != 0:
+            return -5
+        if self.edge_parity() != self.corner_parity():
+            return -6
+        return 0
 
 # --------------------- The Basic 6 Moves ---------------------
 
