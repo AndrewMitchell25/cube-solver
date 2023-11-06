@@ -5,7 +5,7 @@ from pieces import MOVE
 
 from solve import SolutionManager
 
-def solve(cube_string, max_length=25, max_time=120):
+def solve(cube_string, max_length=50, max_time=120):
     sm = SolutionManager(cube_string)
     solution = sm.solve(max_length, time.time() + max_time)
     if solution == -1:
