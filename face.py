@@ -76,10 +76,7 @@ class FaceCube:
             color1 = self.f[corner_facelet[i][(ori + 1) % 3]]
             color2 = self.f[corner_facelet[i][(ori + 2) % 3]]
             for j in range(8):
-                if (
-                    color1 == corner_color[j][1]
-                    and color2 == corner_color[j][2]
-                ):
+                if (color1 == corner_color[j][1] and color2 == corner_color[j][2]):
                     cube.cp[i] = j
                     cube.co[i] = ori
                     break

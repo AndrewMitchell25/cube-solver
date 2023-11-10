@@ -5,55 +5,31 @@ from cube import face
 class CubieCube:
 
     def __init__(self, cp=None, co=None, ep=None, eo=None):
-        # Initialize corner permutations array
-        self.cp = cp[:] if cp else [Corner(i) for i in range(8)]
-
-        # Initialize corner orientations array
-        self.co = co[:] if co else [0] * 8
-
-        # Initialize edge permutations array
-        self.ep = ep[:] if ep else [Edge(i) for i in range(12)]
-
-        # Initialize edge orientations array
-        self.eo = eo[:] if eo else [0] * 12
+        if cp and co and ep and eo:
+            self.cp = cp[:]
+            self.co = co[:]
+            self.ep = ep[:]
+            self.eo = eo[:]
+        else:
+            # Initialise cube if position not given.
+            self.cp = [Corner.URF,Corner.UFL,Corner.ULB,Corner.UBR,Corner.DFR,Corner.DLF,Corner.DBL,Corner.DRB]
+            self.co = [0, 0, 0, 0, 0, 0, 0, 0]
+            self.ep = [Edge.UR,Edge.UF,Edge.UL,Edge.UB,Edge.DR,Edge.DF,Edge.DL,Edge.DB,Edge.FR,Edge.FL,Edge.BL,Edge.BR]
+            self.eo = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     def corner_multiply(self, other):
         """Multiplies the corners of this cube by another cube, other"""
-        new_cp = [0] * 8
-        new_co = [0] * 8
-        co = 0
-
-        for c in Corner:
-            new_cp[c] = self.cp[other.cp[c]]
-            new_co[c] = (self.co[other.cp[c]] + other.co[c]) % 3
-            """
-            co1 = self.co[other.cp[c]]
-            co2 = other.co[c]
-
-            if co1 < 3 and co2 < 3:
-                co = co1 + co2
-                if co >= 3:
-                    co -= 3
-
-            new_co[c] = co
-            """
-
-        for c in Corner:
-            self.cp[c] = new_cp[c]
-            self.co[c] = new_co[c]
+        new_cp = [self.cp[other.cp[c]] for c in range(8)]
+        new_co = [(self.co[other.cp[c]] + other.co[c]) % 3 for c in range(8)]
+        self.cp = new_cp[:]
+        self.co = new_co[:]
 
     def edge_multiply(self, other):
         """Multiplies the edges of this cube by another cube, other"""
-        new_eo = [0] * 12
-        new_ep = [0] * 12
-
-        for e in Edge:
-            new_eo[e] = (self.eo[other.ep[e]] + other.eo[e]) % 2
-            new_ep[e] = self.ep[other.ep[e]]
-
-        for e in Edge:
-            self.eo[e] = new_eo[e]
-            self.ep[e] = new_ep[e]
+        new_ep = [self.ep[other.ep[e]] for e in range(12)]
+        new_eo = [(self.eo[other.ep[e]] + other.eo[e]) % 2 for e in range(12)]
+        self.ep = new_ep[:]
+        self.eo = new_eo[:]
 
     def multiply(self, other):
         """Multiplies this cube by another cube, other"""
@@ -172,10 +148,11 @@ class CubieCube:
         will be in the range of 0 to 12C4
         """
         udslice, seen = 0, 0
-        for i in range(11, -1, -1):
+        for i in range(12):
             if 8 <= self.ep[i] <= 11:
-                udslice += c_nk(11 - i, seen + 1)
                 seen += 1
+            elif seen >= 1:    
+                udslice += c_nk(i, seen - 1)
         return udslice
     
     def set_udslice(self, udslice):
@@ -183,7 +160,7 @@ class CubieCube:
         udslice_edge = [Edge.FR, Edge.FL, Edge.BL, Edge.BR]
         other_edge = [Edge.UR, Edge.UF, Edge.UL, Edge.UB, Edge.DR, Edge.DF, Edge.DL, Edge.DB]
         for i in range(12):
-            self.ep[i] = -1
+            self.ep[i] = Edge.DB
 
         # first position the slice edges
         seen = 3
@@ -196,7 +173,7 @@ class CubieCube:
         # then the remaining edges
         x = 0
         for i in range(12):
-            if self.ep[i] == -1:
+            if self.ep[i] == Edge.DB:
                 self.ep[i] = other_edge[x]
                 x += 1
 

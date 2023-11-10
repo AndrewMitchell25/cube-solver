@@ -9,7 +9,7 @@ class SolutionManager:
     def __init__(self, facelets):
         self.tables = Tables()
 
-        self.facelets = facelets
+        self.facelets = facelets.upper()
 
         status = self.verify()
         if status:
@@ -24,7 +24,7 @@ class SolutionManager:
             raise ValueError(f"Invalid cube: {error_message[status]}")
         
 
-    def solve(self, max_length = 25, timeout=float("inf")):
+    def solve(self, max_length=50, timeout=float("inf")):
         """
         Implement two consecutive IDA* searches for phase 1 and phase 2
         to solve the cube.

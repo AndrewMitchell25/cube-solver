@@ -41,7 +41,6 @@ class Tables:
 
     def __init__(self):
         if not self.tables_loaded:
-            pass
             self.load_tables()
 
     
@@ -61,6 +60,7 @@ class Tables:
             self.edge4_corner_prune = PruningTable(tables["edge4_corner_prune"], self.CORNER)
 
         else:
+            print("Making move tables...")
             # ----------  Phase 1 move tables  ---------- #
             self.twist_move = self.make_twist_table()
             self.flip_move = self.make_flip_table()
@@ -186,7 +186,7 @@ class Tables:
         return corner_move
 
     def make_udslice_twist_prune(self):
-        udslice_twist_prune = [-1] * (self.UDSLICE * self.TWIST)
+        udslice_twist_prune = [-1 for i in range(self.UDSLICE * self.TWIST)]
         udslice_twist_prune[0] = 0
         count, depth = 1, 0
         while count < self.UDSLICE * self.TWIST:
@@ -205,7 +205,7 @@ class Tables:
         return PruningTable(udslice_twist_prune, self.TWIST)
 
     def make_udslice_flip_prune(self):
-        udslice_flip_prune = [-1] * (self.UDSLICE * self.FLIP)
+        udslice_flip_prune = [-1 for _ in range(self.UDSLICE * self.FLIP)]
         udslice_flip_prune[0] = 0
         count, depth = 1, 0
         while count < self.UDSLICE * self.FLIP:
@@ -225,7 +225,7 @@ class Tables:
 
 
     def make_edge4_edge8_prune(self):
-        edge4_edge8_prune = [-1] * (self.EDGE4 * self.EDGE8)
+        edge4_edge8_prune = [-1 for _ in range(self.EDGE4 * self.EDGE8)]
         edge4_edge8_prune[0] = 0
         count, depth = 1, 0
         while count < self.EDGE4 * self.EDGE8:
@@ -244,7 +244,7 @@ class Tables:
         return PruningTable(edge4_edge8_prune, self.EDGE8)
 
     def make_edge4_corner_prune(self):
-        edge4_corner_prune = [-1] * (self.EDGE4 * self.CORNER)
+        edge4_corner_prune = [-1 for _ in range(self.EDGE4 * self.CORNER)]
         edge4_corner_prune[0] = 0
         count, depth = 1, 0
         while count < self.EDGE4 * self.CORNER:
