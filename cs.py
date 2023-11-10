@@ -2,6 +2,7 @@ import time
 import sys
 import cubie
 from pieces import MOVE
+import scramble
 
 from solve import SolutionManager
 
@@ -39,13 +40,7 @@ def solve_best_generator(cube_string, max_length=25, max_time=10):
                 f"SolutionManager.solve: unexpected return value {solution}"
             )
 
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        move_string = sys.argv[1]
-    else:
-        move_string = input("Input move string: ")
-    
-    move_string = move_string.rstrip().split()
+def solve_from_move_string(move_string):
     cube = cubie.CubieCube()
     for move in move_string:
         axis = MOVE[move[0]]
@@ -59,5 +54,20 @@ if __name__ == "__main__":
         cube.move2(axis, power)
     fc = cube.to_facecube()
     print(fc.to_string())
-    solution = solve(fc.to_string())
+    return solve(fc.to_string())
+
+if __name__ == "__main__":
+    move_string = []
+    if len(sys.argv) > 1:
+        for i in range(len(sys.argv)):
+            if sys.argv[i] == "-s":
+                move_string = sys.argv[i+1].rstrip().split()
+            if sys.argv[i] == "-i":
+                move_string = input("Input move string: ").rstrip().split()
+
+    if not move_string:
+        move_string = scramble.generate_scramble()
+        
+    scramble.print_scramble(move_string)
+    solution = solve_from_move_string(move_string)
     print(solution)
