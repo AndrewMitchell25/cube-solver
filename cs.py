@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     if not move_string:
         move_string = scramble.generate_scramble()
-        
+    
     scramble.print_scramble(move_string)
     solution = solve_from_move_string(move_string)
     print(solution)
