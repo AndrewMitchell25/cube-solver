@@ -32,7 +32,8 @@ class SolutionManager:
         self.phase1_initialize(max_length)
         self.allowed_length = max_length
         self.timeout = timeout
-        print("Phase 1 starting")
+        # print("Phase 1 starting")
+        print("Solving...")
         for depth in range(self.allowed_length):
             n = self.phase1_search(0, depth)
             if n >= 0:
@@ -62,7 +63,7 @@ class SolutionManager:
         return cubie_cube.verify()
     
     def phase1_initialize(self, max_length):
-        print("Phase 1 initializing")
+        # print("Phase 1 initializing")
         # axis and power store the nth move 
         # axis = the index of the face being turned
         # power = the number of clockwise quarter turns (direction of turn)
@@ -97,7 +98,7 @@ class SolutionManager:
         self.min_dist_1[0] = self.phase1_cost(0)
 
     def phase2_initialize(self, n):
-        print("Phase 2 initializing")
+        # print("Phase 2 initializing")
         if time.time() > self.timeout:
             return -2
         # initialise phase 2 search from the phase 1 solution
@@ -109,7 +110,7 @@ class SolutionManager:
         self.edge8[n] = cc.get_edge8()
         self.corner[n] = cc.get_corner()
         self.min_dist_2[n] = self.phase2_cost(n)
-        print("Phase 2 starting")
+        # print("Phase 2 starting")
         for depth in range(self.allowed_length - n):
             m = self.phase2_search(n, depth)
             if m >= 0:
@@ -140,7 +141,7 @@ class SolutionManager:
         if time.time() > self.timeout:
             return -2
         elif self.min_dist_1[n] == 0:
-            print("Phase 1 ended")
+            # print("Phase 1 ended")
             return self.phase2_initialize(n)
         elif self.min_dist_1[n] <= depth:
             for i in range(6):
@@ -169,7 +170,7 @@ class SolutionManager:
     
     def phase2_search(self, n, depth):
         if self.min_dist_2[n] == 0:
-            print("Phase 2 ended")
+            # print("Phase 2 ended")
             return n
         elif self.min_dist_2[n] <= depth:
             for i in range(6):
