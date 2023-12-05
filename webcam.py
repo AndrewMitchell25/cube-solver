@@ -88,7 +88,7 @@ def draw_contours(frame, contours):
 
 sat_W = 60 
 val_W = 150
-orange_L = 6  
+orange_L = 8  
 orange_H = 23  
 yellow_H = 50  
 green_H = 100  
@@ -102,7 +102,7 @@ def get_colors(frame, contours):
         _, labels, palette = cv2.kmeans(np.float32(roi.reshape(-1, 3)), 1, None, (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 200, .1), 10, cv2.KMEANS_RANDOM_CENTERS)
         _, counts = np.unique(labels, return_counts=True)
         h,s,v = palette[np.argmax(counts)]
-        print(h, s, v)
+        # print(h, s, v)
         if s <= sat_W and v >= val_W:
             stickers.append("U") # white
         elif orange_L <= h < orange_H:
@@ -135,7 +135,7 @@ centers = {
 
 def update_state_string(state_string, center, stickers):
     new_state = state_string[0:(centers[center]*9)] + "".join(stickers) + state_string[(centers[center]*9 + 9):]
-    print(new_state)
+    # print(new_state)
     return new_state
 
 
@@ -192,7 +192,7 @@ def draw_cube(width, height, frame, state_string):
                 cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 0), -1)
                 cv2.rectangle(frame, (x1 + 1, y1 + 1), (x2 - 1, y2 - 1), color, -1)
 
-# solved_string = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB"
+solved_string = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB"
 centers_string = "0000U00000000R00000000F00000000D00000000L00000000B0000"
 
 def run():
@@ -201,10 +201,12 @@ def run():
     flag = 0
     while True:
         _, frame = cap.read()
-        if cv2.waitKey(1) == ord('q'):
+        key = cv2.waitKey(1) & 0xff 
+        if key == 27:
+            state_string = -1
             break
-        if cv2.waitKey(1) == ord(' '):
-            flag = 0
+        elif key == 13:
+            break
 
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         blurred_frame = cv2.blur(gray_frame, (3, 3))

@@ -3,6 +3,7 @@ import sys
 import cubie
 from pieces import MOVE
 import scramble
+import webcam
 
 from solve import SolutionManager
 
@@ -181,7 +182,7 @@ def solve_from_move_string(move_string, display=False):
 if __name__ == "__main__":
     move_string = []
     display = False
-    webcam = False
+    use_webcam = False
     if len(sys.argv) > 1:
         for i in range(len(sys.argv)):
             if sys.argv[i] == "-s":
@@ -191,13 +192,21 @@ if __name__ == "__main__":
             if sys.argv[i] == "-d":
                 display = True
             if sys.argv[i] == "-w":
-                webcam = True
+                use_webcam = True
 
-    if not move_string:
-        move_string = scramble.generate_scramble()
-    
-    scramble.print_scramble(move_string)
-    solution = solve_from_move_string(move_string, display)
+    if use_webcam:
+        print("Please scan the cube faces in the same direction as shown in the bottom corner")
+        cube_string = webcam.run()
+        if(cube_string) == -1:
+            exit()
+        solution = solve(cube_string)
+        
+    else:
+        if not move_string:
+            move_string = scramble.generate_scramble()
+        
+        scramble.print_scramble(move_string)
+        solution = solve_from_move_string(move_string, display)
     print(f"Solution: {solution}")
 
 
