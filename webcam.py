@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-def find_contours(frame2, frame):
+def find_contours(frame):
     contours, hierarchy = cv2.findContours(frame, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     final_contours = []
     # Filter for square contours
@@ -58,7 +58,6 @@ def find_contours(frame2, frame):
                 [(center_x + w * radius), (center_y + h * radius)],
             ]
 
-        
         for neighbor in final_contours:
             (x2, y2, w2, h2) = neighbor
             for (x3, y3) in neighbor_positions:
@@ -198,7 +197,7 @@ centers_string = "0000U00000000R00000000F00000000D00000000L00000000B0000"
 def run():
     cap = cv2.VideoCapture(0)
     state_string = centers_string
-    flag = 0
+
     while True:
         _, frame = cap.read()
         key = cv2.waitKey(1) & 0xff 
@@ -216,14 +215,12 @@ def run():
         
         hsv=cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
 
-        contours = find_contours(frame, dilated_frame)
-        #if len(contours) == 9 and flag == 0: 
+        contours = find_contours(dilated_frame)
+
         if len(contours) == 9: 
             draw_contours(frame, contours)
             center, stickers = get_colors(hsv, contours)
             state_string = update_state_string(state_string, center, stickers)
-            flag = 1
-
         
         draw_cube(int(cap.get(3)), int(cap.get(4)), frame, state_string)
         cv2.imshow("Solver",frame)
